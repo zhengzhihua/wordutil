@@ -12,86 +12,9 @@ import java.util.regex.Pattern;
 
 public class XwpfTUtil {
 
-    /*String filePath = "/sta.docx";
-    InputStream is;
-    XWPFDocument doc;
-    Map<String, Object> params = new HashMap<String, Object>();
-    {
-        params.put("${name}", "xxx");
-        params.put("${sex}", "男");
-        params.put("${political}", "共青团员");
-        params.put("${place}", "sssss");
-        params.put("${classes}", "3102");
-        params.put("${id}", "213123123");
-        params.put("${qq}", "213123");
-        params.put("${tel}", "312313213");
-        params.put("${oldJob}", "sadasd");
-        params.put("${swap}", "是");
-        params.put("${first}", "asdasd");
-        params.put("${second}", "综合事务部");
-        params.put("${award}", "asda");
-        params.put("${achievement}", "完成科协网站的开发");
-        params.put("${advice}", "没有建议");
-        params.put("${attach}", "无");
-        try {
-            is = new FileInputStream(filePath);
-            doc = new XWPFDocument(is);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-
-
-    /**
-     * 用一个docx文档作为模板，然后替换其中的内容，再写入目标文档中。
-     *
-     * @throws Exception
+    /*
+     *输出文档
      */
-    /*@Test
-    public void testTemplateWrite() throws Exception {
-        //替换段落里面的变量
-        this.replaceInPara(doc, params);
-        //替换表格里面的变量
-        this.replaceInTable(doc, params);
-        OutputStream os = new FileOutputStream("D:\\sta1.docx");
-        doc.write(os);
-        this.close(os);
-        this.close(is);
-    }*/
-
-    /*@Test
-    public void myTest1() throws Exception {
-        *//*Iterator<XWPFParagraph> iterator = doc.getParagraphsIterator();
-        XWPFParagraph para;
-        while (iterator.hasNext()) {
-            para = iterator.next();
-            List<XWPFRun> runs = para.getRuns();
-            para.removeRun(0);
-            para.insertNewRun(0).setText("hello");
-        }
-        OutputStream os = new FileOutputStream("D:\\sta1.docx");
-        doc.write(os);
-        this.close(os);
-        this.close(is);*//*
-        System.out.println(this.matcher("报告日期：${reportDate}").find());
-    }*/
-
-    /*@Test
-    public void myReplaceInPara() {
-//        Iterator<XWPFParagraph> iterator = doc.getParagraphsIterator();
-//        XWPFParagraph para;
-//        while (iterator.hasNext()) {
-//            para = iterator.next();
-//            List<XWPFRun> runs = para.getRuns();
-//
-//
-//        }
-        System.out.println('{'=='{');
-    }*/
-
-
     public void creatWord(Map<String,Object> wodata, String tempFile, File newFile){
         XWPFDocument xwpfDocument;
         File file = new File(tempFile);
@@ -104,8 +27,8 @@ public class XwpfTUtil {
             replaceInTable(xwpfDocument, (Map<String, Object>) wodata.get("tdata"));
             outputStream=new FileOutputStream(newFile);
             xwpfDocument.write(outputStream);
-            inputStream.close();
-            outputStream.close();
+            close(inputStream);
+            close(outputStream);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -141,13 +64,14 @@ public class XwpfTUtil {
      */
     public void replaceInPara(XWPFParagraph para, Map<String, Object> params) {
         List<XWPFRun> runs;
-        Matcher matcher;
         if (this.matcher(para.getParagraphText()).find()) {
             runs = para.getRuns();
             for (int i = 0; i < runs.size(); i++) {
+                System.out.print(runs.size()+"----"+params.size());
                 XWPFRun run = runs.get(i);
                 for(Map.Entry<String, Object> entry: params.entrySet()){
                     if(run.toString().contains("${"+entry.getKey()+"}")){
+                        System.out.print(run.toString());
                         String text = run.toString().replace("${" + entry.getKey() + "}", entry.getValue().toString());
                         run.setText(text,0);
                     }
