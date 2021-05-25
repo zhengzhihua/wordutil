@@ -50,8 +50,10 @@ public class XwpfTUtil {
     public void replaceInPara(XWPFDocument doc, Map<String, Object> params) {
         Iterator<XWPFParagraph> iterator = doc.getParagraphsIterator();
         XWPFParagraph para;
+
         while (iterator.hasNext()) {
             para = iterator.next();
+            para.setAlignment(ParagraphAlignment.CENTER);
             this.replaceInPara(para, params);
         }
     }

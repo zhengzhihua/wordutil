@@ -31,12 +31,15 @@ public class WordDemo {
         map.put("time","2020-04-22" );
         WordUtil.exportWord("templates/demo.docx","D:/" ,"生成文件1.docx" ,map );*/
 
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String cc=System.getProperty("user.dir");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy年MM月dd日");
         Map<String, Object> params = new HashMap<String, Object>();
         Map<String, Object> wdata = new HashMap<String, Object>();
         wdata.put("sch","北京一中");
         wdata.put("wd1","学生信息表，主要有学生年级、班级、家庭成员等");
         wdata.put("wd2","教师信息表，主要有教师类别、名称、等级、获得奖项等");
+        wdata.put("ends",sdf.format(new Date()));
         wdata.put("end",sdf.format(new Date()));
         List list=new ArrayList<Object>();
         Object[] tdata1=new Object[]{"xiaozhang","男","14","初二3班","篮球","表现良好"};
@@ -54,7 +57,7 @@ public class WordDemo {
         params.put("fdata",wdata);
         params.put("tdata",map);
         XwpfTUtil xwpfTUtil = new XwpfTUtil();
-        String newFilses = "D:/pdffile/" + "newFile_" + XwpfTUtil.dataStr() + ".docx";
+        String newFilses = cc+"\\src\\main\\resources\\pdffile\\" + "newFile_" + XwpfTUtil.dataStr() + ".docx";
         File file1 = new File(newFilses);
         if (!file1.exists()) {
             try {
@@ -63,7 +66,7 @@ public class WordDemo {
                 e.printStackTrace();
             }
         }
-        String cc=System.getProperty("user.dir");
+
         xwpfTUtil.creatWord(params,cc+"\\src\\main\\resources\\templates\\demos.docx",file1);
 
     }
