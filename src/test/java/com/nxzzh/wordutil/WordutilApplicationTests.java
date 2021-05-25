@@ -10,4 +10,9 @@ class WordutilApplicationTests {
     void contextLoads() {
     }
 
+    @Test
+    public void excelTest(){
+        System.out.print("hello");
+    }
+
 }
