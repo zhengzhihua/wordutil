@@ -32,7 +32,7 @@ public class ExcelUtil {
         }
         OutputStream output=new FileOutputStream(file1);
         InputStream input = new FileInputStream(tempFile);
-        XSSFWorkbook hssfWork=new XSSFWorkbook(input);
+        XSSFWorkbook hssfWork=new XSSFWorkbook(input);     //强调xls表格使用HSSFWorkbook对象，xlsx使用XSSFWorkbook对象
         int sheetNum=hssfWork.getNumberOfSheets();
         System.out.println(sheetNum);
         editXSSFWorkbook(hssfWork,excelData);
