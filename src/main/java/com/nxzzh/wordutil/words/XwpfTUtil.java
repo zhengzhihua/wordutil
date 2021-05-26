@@ -2,18 +2,22 @@ package com.nxzzh.wordutil.words;
 
 import org.apache.poi.xwpf.usermodel.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.logging.SimpleFormatter;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class XwpfTUtil {
 
-    /*
-     *输出文档
+    /**
+     * @description 根据word模板创建word文档
+     * @param wodata  文档数据
+     * @param tempFile  模板路径
+     * @param newFile  创建的文档路径
      */
     public void creatWord(Map<String,Object> wodata, String tempFile, File newFile){
         XWPFDocument xwpfDocument;
@@ -23,9 +27,12 @@ public class XwpfTUtil {
         try {
             inputStream=new FileInputStream(file);
             xwpfDocument=new XWPFDocument(inputStream);
+            //获取word段落文字的数据
             replaceInPara(xwpfDocument, (Map<String, Object>) wodata.get("fdata"));
+            //获取word表格的数据
             replaceInTable(xwpfDocument, (Map<String, Object>) wodata.get("tdata"));
             outputStream=new FileOutputStream(newFile);
+            //将操作完的xwpfDocument写入输出流中，输出文件中
             xwpfDocument.write(outputStream);
             close(inputStream);
             close(outputStream);
@@ -35,6 +42,10 @@ public class XwpfTUtil {
 
     }
 
+    /**
+     * @description  获取string类型的系统时间
+     * @return  string时间
+     */
     public static String dataStr(){
         Date date= new Date();
         SimpleDateFormat simpleFormatter =new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
@@ -42,10 +53,9 @@ public class XwpfTUtil {
     }
 
     /**
-     * 替换段落里面的变量
-     *
+     * @description 替换段落里面的变量
      * @param doc    要替换的文档
-     * @param params 参数
+     * @param params 替换的数据
      */
     public void replaceInPara(XWPFDocument doc, Map<String, Object> params) {
         Iterator<XWPFParagraph> iterator = doc.getParagraphsIterator();
@@ -59,10 +69,9 @@ public class XwpfTUtil {
     }
 
     /**
-     * 替换段落里面的变量
-     *
+     * @description 替换段落里面的变量
      * @param para   要替换的段落
-     * @param params 参数
+     * @param params 数据
      */
     public void replaceInPara(XWPFParagraph para, Map<String, Object> params) {
         List<XWPFRun> runs;
@@ -72,6 +81,7 @@ public class XwpfTUtil {
                 System.out.print(runs.size()+"----"+params.size());
                 XWPFRun run = runs.get(i);
                 for(Map.Entry<String, Object> entry: params.entrySet()){
+                    //判断${key}标签，通过数据替换${key}标签
                     if(run.toString().contains("${"+entry.getKey()+"}")){
                         System.out.print(run.toString());
                         String text = run.toString().replace("${" + entry.getKey() + "}", entry.getValue().toString());
@@ -80,45 +90,43 @@ public class XwpfTUtil {
                 }
 
             }
-
-        /*    for (String key : params.keySet()) {
-                if (str.equals(key)) {
-                    para.createRun().setText((String) params.get(key));
-                    break;
-                }
-            }*/
         }
     }
 
     /**
-     * 替换表格里面的变量
-     *
-     * @param doc    要替换的文档
-     * @param params 参数
+     * @description 遍历文档中的表格，对指定表格指定数据
+     * @param doc    要替换的表格
+     * @param params 数据
      */
     public void replaceInTable(XWPFDocument doc, Map<String, Object> params) {
         Iterator<XWPFTable> iterator = doc.getTablesIterator();
         XWPFTable table;
         while (iterator.hasNext()) {
             for(int num=0; num<params.size();num++){
+                //获取word中的表格，对表格指定数据
                 table = iterator.next();
                 this.insertTable(table,(List)params.get("tab"+num));
             }
         }
     }
 
-    /*
-    * 表格插入数据
-    * */
+    /**
+     * @description  替换指定表格中的数据
+     * @param table  指定表格
+     * @param tabdata  表格数据
+     */
 
     private void insertTable( XWPFTable table,List<Object[]> tabdata){
         List<XWPFTableRow> rows;
         List<XWPFTableCell> cells;
         if(null != tabdata && tabdata.size()>0){
             for(int rowN = 1 ;rowN <table.getRows().size() ;rowN++){
+                //获取表格行
                 rows = table.getRows();
                 for(int cellN = 0 ;cellN <rows.get(rowN).getTableCells().size() ;cellN++){
+                    //获取表格中指定行中的单元格
                     cells = rows.get(rowN).getTableCells();
+                    //对指定单元格赋值
                     cells.get(cellN).setText((tabdata.get(rowN-1)[cellN]).toString());
                 }
             }
